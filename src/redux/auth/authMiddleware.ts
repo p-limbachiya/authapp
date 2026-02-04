@@ -1,7 +1,7 @@
 import type { Middleware } from '@reduxjs/toolkit'
 import { logout } from './authSlice'
 
-const DEV = import.meta.env.DEV
+const DEV = process.env.NODE_ENV !== 'production'
 
 export const authMiddleware: Middleware = (storeApi) => (next) => (action) => {
   const result = next(action)

@@ -4,16 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "lint": "echo \"No linter configured\""
   },
   "devDependencies": {
-    "typescript": "~5.9.3",
-    "vite": "^7.2.4",
+    "@types/node": "^22.13.4",
     "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.2"
+    "@types/react-dom": "^18.3.2",
+    "typescript": "~5.9.3"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
@@ -22,10 +22,10 @@
     "@emotion/styled": "^11.14.1",
     "@reduxjs/toolkit": "^2.11.2",
     "framer-motion": "^7.10.0",
+    "next": "^15.5.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.71.1",
-    "react-redux": "^9.2.0",
-    "react-router-dom": "^7.13.0"
+    "react-redux": "^9.2.0"
   }
 }
