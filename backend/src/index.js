@@ -15,11 +15,13 @@ const originsRaw = CLIENT_URL ?? FRONTEND_ORIGIN ?? 'http://localhost:3000'
 const ALLOWED_ORIGINS = originsRaw.split(',').map((s) => s.trim()).filter(Boolean)
 
 const corsOptions = {
-  // Allow all origins. (Browser sends Origin → we respond with '*')
-  origin: '*',
+  // Reflect the request origin (works reliably with browsers + preflight).
+  // NOTE: keep credentials=false with reflected origins unless you truly need cookies.
+  origin: (origin, cb) => cb(null, true),
   credentials: false,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204,
 }
 
 app.use(cors(corsOptions))
