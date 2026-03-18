@@ -16,10 +16,13 @@ const ALLOWED_ORIGINS = originsRaw.split(',').map((s) => s.trim()).filter(Boolea
 
 app.use(
   cors({
-    origin: "*",
+    // Allow all origins (development-friendly).
+    // Note: keep `credentials: false` when using wildcard origins.
+    origin: true,
     credentials: false,
   }),
 )
+app.options('*', cors({ origin: true, credentials: false }))
 app.use(express.json())
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
