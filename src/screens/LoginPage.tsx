@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { login, selectAuth } from '../redux/auth/authSlice'
 import type { AppDispatch } from '../redux/store'
 
@@ -32,7 +32,6 @@ export const LoginPage = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { loading } = useSelector(selectAuth)
   const router = useRouter()
-  const searchParams = useSearchParams()
   const toast = useToast()
 
   const onSubmit = (values: LoginFormValues) => {
@@ -45,8 +44,7 @@ export const LoginPage = () => {
           duration: 3000,
           isClosable: true,
         })
-        const from = searchParams.get('from') ?? '/dashboard'
-        router.replace(from)
+        router.replace('/dashboard')
       })
       .catch(() => {
         // error toasts are handled globally via auth error state
