@@ -64,3 +64,100 @@ The application supports two user roles:
 - `/reports` - Reports page (protected)
 - `/not-authorized` - Unauthorized access page
 - `*` - 404 Not Found page
+
+## 🔌 Backend API (Node.js)
+
+This repo also includes a minimal Express backend in `backend/` that mirrors the current frontend auth + RBAC behavior.
+
+### Admin credentials (seeded)
+
+- **Email**: `admin@example.com`
+- **Password**: `password`
+
+You can change these via `backend/.env` (`SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`) and re-run the seed.
+
+### Endpoints
+
+- `POST /auth/login` → `{ user, token, expiresAt }`
+- `POST /auth/validate` → `{ valid: true }` (or `401` with `{ valid: false, code, error }`)
+- `GET /auth/me` (auth) → `{ user }`
+- `GET /dashboard/stats` (auth) → dashboard stats used by the UI
+- `GET /reports` (auth + role: `admin|manager`) → dummy reports list
+- `GET /admin/users` (auth + role: `admin`) → list users
+- `POST /admin/users` (auth + role: `admin`) → create user
+- `PUT /admin/users/:id` (auth + role: `admin`) → update user
+- `DELETE /admin/users/:id` (auth + role: `admin`) → delete user
+
+### Run backend
+
+1. Copy env file and set a secret:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+2. Install + sync DB + seed + run:
+
+If your Postgres database is shared / already has tables, **use a dedicated schema** in `DATABASE_URL`, e.g. add `&schema=authapp` (or `?schema=authapp` depending on what’s already in the URL).
+
+3. Commands:
+
+```bash
+cd backend
+npm install
+npm run prisma:push
+npm run seed
+npm run dev
+```
+
+### Frontend → backend URL
+
+Set `NEXT_PUBLIC_API_URL` (e.g. `http://localhost:5000`) in your frontend environment.
+
+## 🧭 Deploy backend to Render, run frontend locally
+
+### Render backend
+
+Create a Render **Web Service** with:
+- **Root directory**: `backend`
+- **Build command**:
+
+```bash
+npm install && npx prisma generate
+```
+
+- **Start command**:
+
+```bash
+npm start
+```
+
+Set these **environment variables** in Render:
+- `DATABASE_URL` (your Neon URL)
+- `DB_SCHEMA=authapp_rbac` (or any new schema name)
+- `JWT_SECRET`
+- `JWT_EXPIRES_IN=7d`
+- `CLIENT_URL=http://localhost:3000` (while you run frontend locally)
+- `NODE_ENV=production`
+
+Optional (seed admin identity):
+- `SEED_ADMIN_EMAIL=admin@example.com`
+- `SEED_ADMIN_PASSWORD=password`
+- `SEED_ADMIN_NAME=Alice Admin`
+
+Then run seed once (Render Shell):
+
+```bash
+node prisma/seed.js
+```
+
+### Local frontend (points to Render)
+
+Copy the example env file and put your Render backend URL:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Set:
+- `NEXT_PUBLIC_API_URL=https://<your-render-service>.onrender.com`

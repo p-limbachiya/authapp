@@ -1,3 +1,4 @@
+// Deprecated: replaced by backend API in `src/api/authApi.ts`.
 export type UserRole = 'admin' | 'manager' | 'user'
 
 export interface FakeUser {

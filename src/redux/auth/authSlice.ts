@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import { fakeLogin, validateToken, AuthResponse, UserRole, AuthError } from '../../api/fakeAuthApi'
+import { login as apiLogin, validateToken, AuthResponse, UserRole, AuthError } from '../../api/authApi'
 import type { RootState } from '../store'
 
 export interface AuthState {
@@ -58,7 +58,7 @@ export const login = createAsyncThunk<
   { rejectValue: string }
 >('auth/login', async (credentials, { rejectWithValue }) => {
   try {
-    return await fakeLogin(credentials.email, credentials.password)
+    return await apiLogin(credentials.email, credentials.password)
   } catch (error) {
     if (error instanceof AuthError) {
       return rejectWithValue(error.message)
@@ -78,7 +78,7 @@ export const restoreSession = createAsyncThunk<
   }
 
   try {
-    const valid = await validateToken(stored.token, stored.expiresAt)
+    const valid = await validateToken(stored.token)
     if (!valid) {
       clearSession()
       return null
