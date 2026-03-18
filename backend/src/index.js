@@ -16,7 +16,7 @@ const ALLOWED_ORIGINS = originsRaw.split(',').map((s) => s.trim()).filter(Boolea
 
 app.use(
   cors({
-    origin: ALLOWED_ORIGINS,
+    origin: "*",
     credentials: false,
   }),
 )
