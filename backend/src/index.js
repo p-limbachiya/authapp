@@ -11,13 +11,22 @@ const app = express()
 const PORT = Number(process.env.PORT ?? 4000)
 const CLIENT_URL = process.env.CLIENT_URL
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN
-const originsRaw = CLIENT_URL ?? FRONTEND_ORIGIN ?? 'http://localhost:3000'
-const ALLOWED_ORIGINS = originsRaw.split(',').map((s) => s.trim()).filter(Boolean)
+
+// Explicit allowed origins: localhost + Vercel + any from env (comma-separated)
+const envOrigins = (CLIENT_URL ?? FRONTEND_ORIGIN ?? '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean)
+
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'https://authapp-bay-mu.vercel.app',
+  ...envOrigins,
+].filter((v, i, a) => a.indexOf(v) === i)
 
 const corsOptions = {
-  // Reflect the request origin (works reliably with browsers + preflight).
-  // NOTE: keep credentials=false with reflected origins unless you truly need cookies.
-  origin: (origin, cb) => cb(null, true),
+  origin: ALLOWED_ORIGINS,
   credentials: false,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -25,7 +34,6 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
-app.options('*', cors(corsOptions))
 app.use(express.json())
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
