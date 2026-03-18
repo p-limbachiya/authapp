@@ -14,15 +14,16 @@ const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN
 const originsRaw = CLIENT_URL ?? FRONTEND_ORIGIN ?? 'http://localhost:3000'
 const ALLOWED_ORIGINS = originsRaw.split(',').map((s) => s.trim()).filter(Boolean)
 
-app.use(
-  cors({
-    // Allow all origins (development-friendly).
-    // Note: keep `credentials: false` when using wildcard origins.
-    origin: true,
-    credentials: false,
-  }),
-)
-app.options('*', cors({ origin: true, credentials: false }))
+const corsOptions = {
+  // Allow all origins. (Browser sends Origin → we respond with '*')
+  origin: '*',
+  credentials: false,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}
+
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions))
 app.use(express.json())
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
